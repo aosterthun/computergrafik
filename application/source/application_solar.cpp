@@ -35,18 +35,21 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 
     glm::fmat4 model_matrix;
 
-    model_matrix = glm::rotate(model_matrix, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
     //model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), turning_axis);
 
     //check wether the planet has a reference planet
     if(planet.reference_planet == nullptr)
     {
+      model_matrix = glm::rotate(model_matrix, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
       //normal translation
       model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.distance});
     }
     else 
     {
       Planet refPlan = *planet.reference_planet;
+      
+      model_matrix = glm::rotate(model_matrix, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis) * glm::rotate(model_matrix, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
+      
       model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, refPlan.distance}) * glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.distance });
       //model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.distance}) * glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, refPlan.distance });
     }
