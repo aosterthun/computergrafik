@@ -31,13 +31,23 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
     // bind shader to upload uniforms
     glUseProgram(m_shaders.at("planet").handle);
 
-    glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), glm::fvec3{0.0f, 1.0f, 0.0f});
-    model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.size});
+    glm::fvec3 turning_axis{0.0f, 1.0f, 0.0f};
+
+    glm::fmat4 model_matrix;
+
+    model_matrix = glm::rotate(model_matrix, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
+    //model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), turning_axis);
+
+    model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.distance});
+
+    model_matrix = glm::scale(model_matrix, glm::fvec3{ planet.size, planet.size, planet.size});
+
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
                        1, GL_FALSE, glm::value_ptr(model_matrix));
 
     // extra matrix for normal transformation to keep them orthogonal to surface
     glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
+
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                        1, GL_FALSE, glm::value_ptr(normal_matrix));
 
@@ -49,7 +59,18 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 }
 
 void ApplicationSolar::render() const {
-  std::vector<Planet> planets = {Planet{1.0,1.0,1.0}};//,Planet{10.0,1.0,1.0}};
+
+  std::vector<Planet> planets = { Planet{ 1.0f, 0.0f, 0.0f}, //sun
+                                  Planet{ 0.5f,  1.5f, 5.0f}, //mercury
+                                  Planet{ 0.25f,  1.3f, 6.6f}, //venus
+                                  Planet{ 0.14f,  0.9f, 7.0f}, //earth
+                                  Planet{ 0.4f, 1.0f, 9.0f}, //mars
+                                  Planet{ 0.43f, 0.9f, 12.0f}, //jupiter
+                                  Planet{ 0.22f, 0.6f, 14.0f}, //saturn
+                                  Planet{ 0.42f, 0.3f, 16.0f}, //uranus
+                                  Planet{ 0.15f, 0.4f, 19.0f} //neptune
+                                };
+
   for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
   {
     upload_planet_transforms(*i);
@@ -85,27 +106,31 @@ void ApplicationSolar::uploadUniforms() {
 void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) {
   //Button: W Action: move front
   if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, -0.1f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, -1.0f});
     updateView();
   } //Button: S Action: move back
   else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 0.1f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 1.0f});
     updateView();
   } //Button: A Action: move left
   else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{-0.1f, 0.0f, 0.0f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{-1.0f, 0.0f, 0.0f});
     updateView();
   } //Button: D Action: move right
   else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.1f, 0.0f, 0.0f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{1.0f, 0.0f, 0.0f});
     updateView();
   } //Button: DOWN Action: move down (such wow)
   else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, -0.1f, 0.0f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, -1.0f, 0.0f});
     updateView();
   } //Button: UP Action: move up (very suprise)
   else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.1f, 0.0f});
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 1.0f, 0.0f});
+    updateView();
+  } //Button: O Action: sets the view way back (Overview)
+  else if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 10.0f});
     updateView();
   }
 }
