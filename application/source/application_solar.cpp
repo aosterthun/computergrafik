@@ -49,7 +49,7 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 }
 
 void ApplicationSolar::render() const {
-  std::vector<Planet> planets = {Planet{1.0,1.0,1.0},Planet{10.0,1.0,1.0}};
+  std::vector<Planet> planets = {Planet{1.0,1.0,1.0}};//,Planet{10.0,1.0,1.0}};
   for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
   {
     upload_planet_transforms(*i);
@@ -83,12 +83,29 @@ void ApplicationSolar::uploadUniforms() {
 
 // handle key input
 void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) {
+  //Button: W Action: move front
   if (key == GLFW_KEY_W && action == GLFW_PRESS) {
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, -0.1f});
     updateView();
-  }
+  } //Button: S Action: move back
   else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 0.1f});
+    updateView();
+  } //Button: A Action: move left
+  else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{-0.1f, 0.0f, 0.0f});
+    updateView();
+  } //Button: D Action: move right
+  else if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.1f, 0.0f, 0.0f});
+    updateView();
+  } //Button: DOWN Action: move down (such wow)
+  else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, -0.1f, 0.0f});
+    updateView();
+  } //Button: UP Action: move up (very suprise)
+  else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.1f, 0.0f});
     updateView();
   }
 }
