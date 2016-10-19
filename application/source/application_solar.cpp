@@ -36,15 +36,13 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
     glm::fmat4 model_matrix;
 
     //model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), turning_axis);
+    
+    model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
+    //normal translation
+    model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance});
 
     //check wether the planet has a reference planet
-    if(planet.reference_planet == nullptr)
-    {
-      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
-      //normal translation
-      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance});
-    }
-    else 
+    if(planet.reference_planet != nullptr)
     {
       Planet refPlan = *planet.reference_planet;
       
@@ -91,7 +89,7 @@ void ApplicationSolar::render() const {
               Planet{ 0.15f, 0.4f, 19.0f} //neptune
             };
 
-  //planets = {earth}; // testing
+  //planets = {earth, moon2}; // testing
 
 
   for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
