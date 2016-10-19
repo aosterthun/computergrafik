@@ -21,7 +21,8 @@ class ApplicationSolar : public Application {
   void keyCallback(int key, int scancode, int action, int mods);
   // draw all objects
   void render() const;
-
+  
+  
  protected:
   void initializeShaderPrograms();
   void initializeGeometry();

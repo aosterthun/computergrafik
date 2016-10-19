@@ -24,30 +24,34 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  :Application{resource_path}
  ,planet_object{}
 {
-  std::vector<Planet> planets;
   initializeGeometry();
   initializeShaderPrograms();
 }
 
 void ApplicationSolar::render() const {
-  // bind shader to upload uniforms
-  glUseProgram(m_shaders.at("planet").handle);
+  std::vector<Planet> planets = {Planet{1.0,1.0,1.0},Planet{10.0,1.0,1.0}};
+  for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
+  {
 
-  glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), glm::fvec3{0.0f, 1.0f, 0.0f});
-  model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, -1.0f});
-  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
-                     1, GL_FALSE, glm::value_ptr(model_matrix));
+    // bind shader to upload uniforms
+    glUseProgram(m_shaders.at("planet").handle);
 
-  // extra matrix for normal transformation to keep them orthogonal to surface
-  glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
-  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
-                     1, GL_FALSE, glm::value_ptr(normal_matrix));
+    glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), glm::fvec3{0.0f, 1.0f, 0.0f});
+    model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, i->size});
+    glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
+                       1, GL_FALSE, glm::value_ptr(model_matrix));
 
-  // bind the VAO to draw
-  glBindVertexArray(planet_object.vertex_AO);
+    // extra matrix for normal transformation to keep them orthogonal to surface
+    glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
+    glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
+                       1, GL_FALSE, glm::value_ptr(normal_matrix));
 
-  // draw bound vertex array using bound shader
-  glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+    // bind the VAO to draw
+    glBindVertexArray(planet_object.vertex_AO);
+
+    // draw bound vertex array using bound shader
+    glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);  
+    }
 }
 
 void ApplicationSolar::updateView() {
