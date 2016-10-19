@@ -35,19 +35,20 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 
     glm::fmat4 model_matrix;
 
-    model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
-    //normal translation
-    model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance});
-
     //check wether the planet has a reference planet
     if(planet.reference_planet != nullptr)
     {
       Planet refPlan = *planet.reference_planet;
       
-      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis) * glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
-      
-      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, refPlan.distance}) * glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance });
+      //model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis) * glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
+      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis);
+      //model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, refPlan.distance}) * glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance });
+      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, refPlan.distance});
     }
+
+    model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
+    model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance});
+
 
     model_matrix = glm::scale(model_matrix, glm::fvec3{ planet.size, planet.size, planet.size});
 
@@ -70,8 +71,8 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 void ApplicationSolar::render() const {
   
   //Planet sun{ 1.0f, 0.0f, 0.0f};
-  Planet earth{ 0.14f,  0.9f, 7.0f};
-  Planet moon{ 0.03f, 0.3f, 0.3f, &earth};
+  Planet earth{ 0.14f,  0.3f, 7.0f};
+  Planet moon{ 0.03f, 0.9f, 0.3f, &earth};
 
   std::vector<Planet> planets;
 
