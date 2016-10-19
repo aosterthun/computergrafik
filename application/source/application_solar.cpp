@@ -4,7 +4,6 @@
 #include "utils.hpp"
 #include "shader_loader.hpp"
 #include "model_loader.hpp"
-#include "application_planet.hpp"
 
 #include <glbinding/gl/gl.h>
 // use gl definitions from glbinding 
@@ -28,16 +27,12 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   initializeShaderPrograms();
 }
 
-void ApplicationSolar::render() const {
-  std::vector<Planet> planets = {Planet{1.0,1.0,1.0},Planet{10.0,1.0,1.0}};
-  for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
-  {
-
+void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
     // bind shader to upload uniforms
     glUseProgram(m_shaders.at("planet").handle);
 
     glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), glm::fvec3{0.0f, 1.0f, 0.0f});
-    model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, i->size});
+    model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, planet.size});
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
                        1, GL_FALSE, glm::value_ptr(model_matrix));
 
@@ -51,7 +46,14 @@ void ApplicationSolar::render() const {
 
     // draw bound vertex array using bound shader
     glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);  
-    }
+}
+
+void ApplicationSolar::render() const {
+  std::vector<Planet> planets = {Planet{1.0,1.0,1.0},Planet{10.0,1.0,1.0}};
+  for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
+  {
+    upload_planet_transforms(*i);
+  }
 }
 
 void ApplicationSolar::updateView() {
