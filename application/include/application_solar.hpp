@@ -22,6 +22,7 @@ class ApplicationSolar : public Application {
   void keyCallback(int key, int scancode, int action, int mods);
   // draw all objects
   void render() const;
+  void create_scene();
 
   void upload_planet_transforms(Planet const& planet) const;
     
@@ -32,6 +33,8 @@ class ApplicationSolar : public Application {
 
   // cpu representation of model
   model_object planet_object;
+
+  std::vector<Planet> planets;
 };
 
 #endif

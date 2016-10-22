@@ -19,12 +19,33 @@ using namespace gl;
 
 #include <iostream>
 
-ApplicationSolar::ApplicationSolar(std::string const& resource_path)
- :Application{resource_path}
- ,planet_object{}
+ApplicationSolar::ApplicationSolar(std::string const& resource_path):
+ Application{resource_path},
+ planet_object{},
+ planets{}
 {
   initializeGeometry();
   initializeShaderPrograms();
+
+  create_scene();
+}
+
+void ApplicationSolar::create_scene(){
+
+  Planet earth{ 0.14f,  0.3f, 7.0f};
+  Planet moon{ 0.03f, 0.9f, 0.3f, &earth};
+
+  planets = { //Planet{ 1.0f, 0.0f, 0.0f},    //sun
+              //Planet{ 0.5f,  1.5f, 5.0f},   //mercury
+              //Planet{ 0.25f,  1.3f, 6.6f},  //venus
+              earth,
+              moon
+              //Planet{ 0.4f, 1.0f, 9.0f},    //mars
+              //Planet{ 0.43f, 0.9f, 12.0f},  //jupiter
+              //Planet{ 0.22f, 0.6f, 14.0f},  //saturn
+              //Planet{ 0.42f, 0.3f, 16.0f},  //uranus
+              //Planet{ 0.15f, 0.4f, 19.0f}   //neptune
+            };
 }
 
 void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
@@ -66,25 +87,23 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 
 void ApplicationSolar::render() const {
   
-  //Planet sun{ 1.0f, 0.0f, 0.0f};
+  std::vector<Planet> planets2;
   Planet earth{ 0.14f,  0.3f, 7.0f};
   Planet moon{ 0.03f, 0.9f, 0.3f, &earth};
 
-  std::vector<Planet> planets;
-
-  planets = { Planet{ 1.0f, 0.0f, 0.0f},
-              Planet{ 0.5f,  1.5f, 5.0f}, //mercury
-              Planet{ 0.25f,  1.3f, 6.6f}, //venus
+  planets2 = { Planet{ 1.0f, 0.0f, 0.0f},    //sun
+              Planet{ 0.5f,  1.5f, 5.0f},   //mercury
+              Planet{ 0.25f,  1.3f, 6.6f},  //venus
               earth,
               moon,
-              Planet{ 0.4f, 1.0f, 9.0f}, //mars
-              Planet{ 0.43f, 0.9f, 12.0f}, //jupiter
-              Planet{ 0.22f, 0.6f, 14.0f}, //saturn
-              Planet{ 0.42f, 0.3f, 16.0f}, //uranus
-              Planet{ 0.15f, 0.4f, 19.0f} //neptune
+              Planet{ 0.4f, 1.0f, 9.0f},    //mars
+              Planet{ 0.43f, 0.9f, 12.0f},  //jupiter
+              Planet{ 0.22f, 0.6f, 14.0f},  //saturn
+              Planet{ 0.42f, 0.3f, 16.0f},  //uranus
+              Planet{ 0.15f, 0.4f, 19.0f}   //neptune
             };
 
-  for (std::vector<Planet>::iterator i = planets.begin(); i != planets.end(); ++i)
+  for(std::vector<Planet>::const_iterator i = planets2.begin(); i != planets2.end(); ++i)
   {
     upload_planet_transforms(*i);
   }
