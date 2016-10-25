@@ -1,18 +1,22 @@
 struct Planet
 {
-	Planet( float s, float r, float d):
+	Planet( std::string n, float s, float r, float d):
+	name{n},
 	size{s},
 	rotationSpeed{r},
 	distance{d},
 	reference_planet{nullptr}
 	{}
 
-	Planet( float s, float r, float d, Planet* rp):
+	Planet( std::string n, float s, float r, float d, Planet* rp):
+	name{n},
 	size{s},
 	rotationSpeed{r},
 	distance{d},
 	reference_planet{rp}
 	{}
+
+	std::string name;
 
 	float size;
 	float rotationSpeed;
