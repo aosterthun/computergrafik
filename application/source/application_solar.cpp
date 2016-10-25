@@ -181,6 +181,13 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
   }
 }
 
+// handle mouse input
+void ApplicationSolar::mouseCallback(double pos_x, double pos_y)
+{
+  std::cout << "mouseCallback: " << pos_x << " " << pos_y << std::endl;
+}
+
+
 // load shader programs
 void ApplicationSolar::initializeShaderPrograms() {
   // store shader program objects in container
