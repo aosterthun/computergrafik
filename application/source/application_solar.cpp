@@ -27,28 +27,41 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
   initializeGeometry();
   initializeShaderPrograms();
 
-  create_scene();
+  planets = create_scene();
+
 }
 
-void ApplicationSolar::create_scene(){
+std::vector<std::shared_ptr<Planet>> ApplicationSolar::create_scene() const{
 
-  Planet earth{ 0.14f,  0.3f, 7.0f};
-  Planet moon{ 0.03f, 0.9f, 0.3f, &earth};
 
-  planets = { //Planet{ 1.0f, 0.0f, 0.0f},    //sun
-              //Planet{ 0.5f,  1.5f, 5.0f},   //mercury
-              //Planet{ 0.25f,  1.3f, 6.6f},  //venus
-              earth,
-              moon
-              //Planet{ 0.4f, 1.0f, 9.0f},    //mars
-              //Planet{ 0.43f, 0.9f, 12.0f},  //jupiter
-              //Planet{ 0.22f, 0.6f, 14.0f},  //saturn
-              //Planet{ 0.42f, 0.3f, 16.0f},  //uranus
-              //Planet{ 0.15f, 0.4f, 19.0f}   //neptune
-            };
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f);
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, sun_ptr);
+  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
+  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury", 0.5f,  1.5f, 5.0f, sun_ptr);
+  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus", 0.25f,  1.3f, 6.6f, sun_ptr);
+  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars", 0.4f, 1.0f, 9.0f, sun_ptr);
+  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter", 0.43f, 0.9f, 12.0f, sun_ptr);
+  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn", 0.22f, 0.6f, 14.0f, sun_ptr);
+  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus", 0.42f, 0.3f, 16.0f, sun_ptr);
+  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune", 0.15f, 0.4f, 19.0f, sun_ptr);
+
+  std::vector<std::shared_ptr<Planet>> tmp;
+
+  tmp.push_back(sun_ptr);
+  tmp.push_back(earth_ptr);
+  tmp.push_back(moon_ptr);
+  tmp.push_back(mercury_ptr);
+  tmp.push_back(venus_ptr);
+  tmp.push_back(mars_ptr);
+  tmp.push_back(jupiter_ptr);
+  tmp.push_back(saturn_ptr);
+  tmp.push_back(uranus_ptr);
+  tmp.push_back(neptune_ptr);
+
+  return tmp;
 }
 
-void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
+void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
     // bind shader to upload uniforms
     glUseProgram(m_shaders.at("planet").handle);
 
@@ -57,6 +70,17 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
     glm::fmat4 model_matrix;
 
     //check wether the planet has a reference planet
+    std::shared_ptr<Planet> ref_pl = planet->reference_planet;
+    while(ref_pl != nullptr)
+    {
+      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * ref_pl->rotationSpeed), turning_axis);
+      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, ref_pl->distance});
+
+      //retrieving the new reference planet, can be a nullptr
+      ref_pl = ref_pl->reference_planet;
+    }
+
+    /*
     if(planet.reference_planet != nullptr)
     {
       Planet refPlan = *planet.reference_planet;
@@ -64,11 +88,12 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
       model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis);
       model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, refPlan.distance});
     }
+    */
 
-    model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet.rotationSpeed), turning_axis);
-    model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet.distance});
-    model_matrix = glm::scale(model_matrix, glm::fvec3{ planet.size, planet.size, planet.size});
-
+    model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * planet->rotationSpeed), turning_axis);
+    model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, planet->distance});
+    model_matrix = glm::scale(model_matrix, glm::fvec3{ planet->size, planet->size, planet->size});
+    
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
                        1, GL_FALSE, glm::value_ptr(model_matrix));
 
@@ -86,24 +111,8 @@ void ApplicationSolar::upload_planet_transforms(Planet const& planet) const{
 }
 
 void ApplicationSolar::render() const {
-  
-  std::vector<Planet> planets2;
-  Planet earth{ 0.14f,  0.3f, 7.0f};
-  Planet moon{ 0.03f, 0.9f, 0.3f, &earth};
 
-  planets2 = { Planet{ 1.0f, 0.0f, 0.0f},    //sun
-              Planet{ 0.5f,  1.5f, 5.0f},   //mercury
-              Planet{ 0.25f,  1.3f, 6.6f},  //venus
-              earth,
-              moon,
-              Planet{ 0.4f, 1.0f, 9.0f},    //mars
-              Planet{ 0.43f, 0.9f, 12.0f},  //jupiter
-              Planet{ 0.22f, 0.6f, 14.0f},  //saturn
-              Planet{ 0.42f, 0.3f, 16.0f},  //uranus
-              Planet{ 0.15f, 0.4f, 19.0f}   //neptune
-            };
-
-  for(std::vector<Planet>::const_iterator i = planets2.begin(); i != planets2.end(); ++i)
+  for(std::vector<std::shared_ptr<Planet>>::const_iterator i = planets.begin(); i != planets.end(); ++i)
   {
     upload_planet_transforms(*i);
   }

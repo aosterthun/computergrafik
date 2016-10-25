@@ -6,6 +6,8 @@
 #include "structs.hpp"
 #include "application_planet.hpp"
 
+#include <memory>
+
 // gpu representation of model
 class ApplicationSolar : public Application {
  public:
@@ -22,9 +24,9 @@ class ApplicationSolar : public Application {
   void keyCallback(int key, int scancode, int action, int mods);
   // draw all objects
   void render() const;
-  void create_scene();
+  std::vector<std::shared_ptr<Planet>> create_scene() const;
 
-  void upload_planet_transforms(Planet const& planet) const;
+  void upload_planet_transforms(std::shared_ptr<Planet> const& planet) const;
     
  protected:
   void initializeShaderPrograms();
@@ -34,7 +36,7 @@ class ApplicationSolar : public Application {
   // cpu representation of model
   model_object planet_object;
 
-  std::vector<Planet> planets;
+  std::vector<std::shared_ptr<Planet>> planets;
 };
 
 #endif
