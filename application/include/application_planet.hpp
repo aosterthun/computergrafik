@@ -1,3 +1,5 @@
+#include <memory>
+
 struct Planet
 {
 	Planet( std::string n, float s, float r, float d):
@@ -8,7 +10,7 @@ struct Planet
 	reference_planet{nullptr}
 	{}
 
-	Planet( std::string n, float s, float r, float d, Planet* rp):
+	Planet( std::string n, float s, float r, float d, std::shared_ptr<Planet> rp):
 	name{n},
 	size{s},
 	rotationSpeed{r},
@@ -22,5 +24,5 @@ struct Planet
 	float rotationSpeed;
 	float distance;
 
-	Planet* reference_planet;
+	std::shared_ptr<Planet> reference_planet;
 };
