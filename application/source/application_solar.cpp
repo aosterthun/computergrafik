@@ -214,6 +214,10 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
 // handle mouse input
 void ApplicationSolar::mouseCallback(double pos_x, double pos_y)
 {
+  // mouse handling
+  m_view_transform = glm::rotate(m_view_transform, (float)(pos_y/100), glm::fvec3(-1.0f,0.0f,0.0f));
+  m_view_transform = glm::rotate(m_view_transform, (float)(pos_x/100), glm::fvec3(0.0f,-1.0f,0.0f));
+  updateView();
   /*
   //Code from: http://learnopengl.com/#!Getting-started/Camera
   if(firstMouse)
