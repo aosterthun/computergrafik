@@ -19,6 +19,8 @@ using namespace gl;
 
 #include <iostream>
 
+#include "application_planet.hpp"
+
 ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  Application{resource_path},
  planet_object{},
@@ -33,12 +35,10 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
 
 std::vector<std::shared_ptr<Planet>> ApplicationSolar::create_scene() const{
 
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.9f, 5.0f);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.9f, 15.0f);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
-
-  std::shared_ptr<Planet> moon_of_moon_ptr     = std::make_shared<Planet>("Moon of Moon", 0.03f, 0.9f, 0.3f, moon_ptr);
-
+  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.2f, moon_ptr);
   std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury", 0.5f,  1.5f, 5.0f, sun_ptr);
   std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus", 0.25f,  1.3f, 6.6f, sun_ptr);
   std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars", 0.4f, 1.0f, 9.0f, sun_ptr);
@@ -52,7 +52,7 @@ std::vector<std::shared_ptr<Planet>> ApplicationSolar::create_scene() const{
   tmp.push_back(sun_ptr);
   tmp.push_back(earth_ptr);
   tmp.push_back(moon_ptr);
-  tmp.push_back(moon_of_moon_ptr);
+  tmp.push_back(m_o_m_ptr);
   tmp.push_back(mercury_ptr);
   tmp.push_back(venus_ptr);
   tmp.push_back(mars_ptr);
@@ -72,31 +72,7 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
 
     glm::fmat4 model_matrix;
 
-    //V1 check wether the planet has a reference planet (only two)
-    /*
-    std::shared_ptr<Planet> ref_pl = planet->reference_planet;
-    while(ref_pl != nullptr)
-    {
-      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * ref_pl->rotationSpeed), turning_axis);
-      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, ref_pl->distance});
-
-      //retrieving the new reference planet, can be a nullptr
-      ref_pl = ref_pl->reference_planet;
-    }
-    */
-
-    //V2 check wether the planet has a reference planet (only one)
-    /*
-    if(planet.reference_planet != nullptr)
-    {
-      Planet refPlan = *planet.reference_planet;
-
-      model_matrix *= glm::rotate(glm::fmat4{}, float(glfwGetTime() * refPlan.rotationSpeed), turning_axis);
-      model_matrix *= glm::translate(glm::fmat4{}, glm::fvec3{0.0f, 0.0f, refPlan.distance});
-    }
-    */
-
-    model_matrix *= planet->model_matrix();
+    model_matrix *= model_matrix(planet);
     model_matrix = glm::scale(model_matrix, glm::fvec3{ planet->size, planet->size, planet->size});
     
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
@@ -179,17 +155,59 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 10.0f});
     updateView();
   }
+  /*
+  //Doesn't work somehow
+  //Button: C Action: sets the view to the center (Center-reset)
+  else if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+    m_view_transform = m_view_transform - m_view_transform;
+    updateView();
+  }
+  */
 }
 
 // handle mouse input
 void ApplicationSolar::mouseCallback(double pos_x, double pos_y)
 {
-  std::cout << "mouseCallback: " << pos_x << " " << pos_y << std::endl;
+  /*
+  //Code from: http://learnopengl.com/#!Getting-started/Camera
+  if(firstMouse)
+  {
+      lastX = xpos;
+      lastY = ypos;
+      firstMouse = false;
+  }
+
+  GLfloat xoffset = xpos - lastX;
+  GLfloat yoffset = lastY - ypos; 
+  lastX = xpos;
+  lastY = ypos;
+
+  GLfloat sensitivity = 0.05;
+  xoffset *= sensitivity;
+  yoffset *= sensitivity;
+
+  yaw   += xoffset;
+  pitch += yoffset;
+
+  if(pitch > 89.0f)
+      pitch = 89.0f;
+  if(pitch < -89.0f)
+      pitch = -89.0f;
+
+  glm::vec3 front;
+  front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+  front.y = sin(glm::radians(pitch));
+  front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+  cameraFront = glm::normalize(front);
+  */
 }
 
 
 // load shader programs
 void ApplicationSolar::initializeShaderPrograms() {
+  /*
+    Planet shader
+  */
   // store shader program objects in container
   m_shaders.emplace("planet", shader_program{m_resource_path + "shaders/simple.vert",
                                            m_resource_path + "shaders/simple.frag"});
@@ -198,6 +216,16 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ModelMatrix"] = -1;
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
+
+  /*
+    Star shader
+  */
+    // store shader program objects in container
+  m_shaders.emplace("star", shader_program{m_resource_path + "shaders/star.vert",
+                                           m_resource_path + "shaders/star.frag"});
+  // request uniform locations for shader program
+  m_shaders.at("planet").u_locs["NormalMatrix"] = -1;
+  m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
 }
 
 // load models
