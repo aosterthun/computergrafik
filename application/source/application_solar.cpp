@@ -99,8 +99,7 @@ void ApplicationSolar::render() const {
 
   glUseProgram(m_shaders.at("star").handle);
   //Matrix for stars
-  glUniformMatrix4fv(m_shaders.at("star").u_locs.at("ModelMatrix"),
-                    1, GL_FALSE, glm::value_ptr(glm::fmat4{}));
+  
 
   //bind VAO of geometry
   glBindVertexArray(stars_object.vertex_AO);
@@ -268,7 +267,6 @@ void ApplicationSolar::initializeShaderPrograms() {
   // store shader program objects in container
   m_shaders.emplace("star", shader_program{m_resource_path + "shaders/star.vert",
                                           m_resource_path + "shaders/star.frag"});
-  m_shaders.at("star").u_locs["ModelMatrix"] = -1;
   m_shaders.at("star").u_locs["ViewMatrix"] = -1;
   m_shaders.at("star").u_locs["ProjectionMatrix"] = -1;
 }
