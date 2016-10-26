@@ -38,14 +38,13 @@ class ApplicationSolar : public Application {
   void initializeGeometry();
   void updateView();
 
-  // cpu representation of model
-  model_object planet_object;
-  model_object stars_object;
-
+  //planets
+  model_object planet_object; // cpu representation of model
   std::vector<std::shared_ptr<Planet>> planets;
-  std::vector<Star> stars;
 
-  std::vector<unsigned> indices;
+  //stars
+  model_object stars_object; // cpu representation of model
+  std::vector<unsigned> stars_indices;
   std::vector<GLfloat> stars_f;
 };
 

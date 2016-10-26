@@ -19,13 +19,14 @@ using namespace gl;
 
 #include <iostream>
 
+#define NUM_STARS 200000 //amount of stars set to the scene
+
 ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  Application{resource_path},
  planet_object{},
- stars_object{},
  planets{},
- stars{},
- indices{},
+ stars_object{},
+ stars_indices{},
  stars_f{}
 {
   create_scene();
@@ -39,8 +40,8 @@ void ApplicationSolar::create_scene() {
   /*
     Planets
   */
-  //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.9f, 15.0f);
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.03f, 15.0f);
+  //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
   std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.09f, moon_ptr);
@@ -67,23 +68,29 @@ void ApplicationSolar::create_scene() {
   /*
     Stars
   */
-  for (int i = 0; i < 20000; ++i)
+  for (int i = 0; i < NUM_STARS; ++i)
   {
-    indices.push_back(i);
+    stars_indices.push_back(i);
 
-    stars.push_back(Star{}); //Star-Ctor uses random values
+    float x, y, z, r , g, b;
+
+    //position
+    x = utils::RandomFloat( -100.0f, 100.0f);
+    y = utils::RandomFloat( -100.0f, 100.0f);
+    z = utils::RandomFloat( -100.0f, 100.0f);
+
+    //color (konfetti atm)
+    r = utils::RandomFloat( 0.0f, 1.0f);
+    g = utils::RandomFloat( 0.0f, 1.0f);
+    b = utils::RandomFloat( 0.0f, 1.0f);
+
+    stars_f.push_back(x);
+    stars_f.push_back(y);
+    stars_f.push_back(z);
+    stars_f.push_back(r);
+    stars_f.push_back(g);
+    stars_f.push_back(b);
   }
-
-  for (std::vector<Star>::iterator i = stars.begin(); i != stars.end(); ++i)
-  {
-    stars_f.push_back(i->position.x);
-    stars_f.push_back(i->position.y);
-    stars_f.push_back(i->position.z);
-    stars_f.push_back(i->color.x);
-    stars_f.push_back(i->color.y);
-    stars_f.push_back(i->color.z);
-  }
-
 }
 
 void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
@@ -313,28 +320,38 @@ void ApplicationSolar::initializeGeometry() {
   /*
     Star
   */
-
+  // generate vertex array object
   glGenVertexArrays(1, &stars_object.vertex_AO);
+  // bind the array for attaching buffers
   glBindVertexArray(stars_object.vertex_AO);
 
+  // generate generic buffer
   glGenBuffers(1, &stars_object.vertex_BO);
+  // bind this as an vertex array buffer containing all attributes
   glBindBuffer(GL_ARRAY_BUFFER, stars_object.vertex_BO);
+  // configure currently bound array buffer
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * stars_f.size(), stars_f.data() , GL_STATIC_DRAW);
 
-  //position
+  // first attribute: position
   glEnableVertexAttribArray(0);
-  //index, num_components, data_type, normalize, stride, offset
+  // index, num_components, data_type, normalize, stride, offset
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*6, NULL);
-  //color
+  
+  //second attribute: color
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*6, (GLvoid*)uintptr_t(sizeof(float)*3));
 
+  // generate generic buffer
   glGenBuffers(1, &stars_object.element_BO);
+  // bind this as an vertex array buffer containing all attributes
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, stars_object.element_BO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, model::INDEX.size * stars.size(), indices.data(), GL_STATIC_DRAW);
+  // configure currently bound array buffer
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, model::INDEX.size * NUM_STARS, stars_indices.data(), GL_STATIC_DRAW);
 
+  // store type of primitive to draw
   stars_object.draw_mode = GL_POINTS;
-  stars_object.num_elements = GLsizei(stars.size());
+  // transfer number of indices to model object 
+  stars_object.num_elements = GLsizei(NUM_STARS);
 }
 
 ApplicationSolar::~ApplicationSolar() {
