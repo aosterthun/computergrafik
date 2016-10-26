@@ -25,9 +25,9 @@ struct Star
     y = RandomFloat( -30.0f, 30.0f);
     z = RandomFloat( -30.0f, 30.0f);
 
-    r = RandomFloat( 0.0f, 1.0f);
-    g = RandomFloat( 0.0f, 1.0f);
-    b = RandomFloat( 0.0f, 1.0f);
+    r = RandomFloat( 0.0f, 255.0f);
+    g = RandomFloat( 0.0f, 255.0f);
+    b = RandomFloat( 0.0f, 255.0f);
 
     position = glm::fvec3{ x, y, z};
     color    = glm::fvec3{ r, g, b};
