@@ -6,7 +6,6 @@
 #include "structs.hpp"
 
 #include "planet.hpp"
-#include "star.hpp"
 
 #include <memory>
 
