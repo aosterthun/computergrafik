@@ -113,6 +113,9 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
 
 void ApplicationSolar::render() const {
 
+  /*
+    Stars
+  */
   glUseProgram(m_shaders.at("star").handle);
 
   //bind VAO of geometry
@@ -120,10 +123,18 @@ void ApplicationSolar::render() const {
   //draw geometry
   glDrawElements(stars_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
 
+  /*
+    Planets
+  */
   for(std::vector<std::shared_ptr<Planet>>::const_iterator i = planets.begin(); i != planets.end(); ++i)
   {
     upload_planet_transforms(*i);
   }
+
+  /*
+    Orbits
+  */
+
 }
 
 void ApplicationSolar::updateView() {
@@ -141,13 +152,13 @@ void ApplicationSolar::updateView() {
   /*
     Stars
   */
-  // upload matrix to gpu
   glUseProgram(m_shaders.at("star").handle);
+
+  // upload matrix to gpu
   glUniformMatrix4fv(m_shaders.at("star").u_locs.at("ViewMatrix"),
                      1, GL_FALSE, glm::value_ptr(view_matrix));
 
-  //reset to planet
-  glUseProgram(m_shaders.at("planet").handle);
+  glUseProgram(m_shaders.at("planet").handle); //reset to planet
 }
 
 void ApplicationSolar::updateProjection() {
@@ -166,8 +177,8 @@ void ApplicationSolar::updateProjection() {
   glUniformMatrix4fv(m_shaders.at("star").u_locs.at("ProjectionMatrix"),
                      1, GL_FALSE, glm::value_ptr(m_view_projection));
 
-  //reset to planet
-  glUseProgram(m_shaders.at("planet").handle);
+  
+  glUseProgram(m_shaders.at("planet").handle); //reset to planet
 }
 
 // update uniform locations
@@ -176,13 +187,10 @@ void ApplicationSolar::uploadUniforms() {
   
   // bind new shader
   glUseProgram(m_shaders.at("planet").handle);
-  std::cout << "Shader planet bound" << std::endl;
 
   updateView();
-  std::cout << "View updated" << std::endl;
 
   updateProjection();
-  std::cout << "Projection updated" << std::endl;
 }
 
 // handle key input
@@ -229,38 +237,7 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
 // handle mouse input
 void ApplicationSolar::mouseCallback(double pos_x, double pos_y)
 {
-  /*
-  //Code from: http://learnopengl.com/#!Getting-started/Camera
-  if(firstMouse)
-  {
-      lastX = xpos;
-      lastY = ypos;
-      firstMouse = false;
-  }
 
-  GLfloat xoffset = xpos - lastX;
-  GLfloat yoffset = lastY - ypos; 
-  lastX = xpos;
-  lastY = ypos;
-
-  GLfloat sensitivity = 0.05;
-  xoffset *= sensitivity;
-  yoffset *= sensitivity;
-
-  yaw   += xoffset;
-  pitch += yoffset;
-
-  if(pitch > 89.0f)
-      pitch = 89.0f;
-  if(pitch < -89.0f)
-      pitch = -89.0f;
-
-  glm::vec3 front;
-  front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-  front.y = sin(glm::radians(pitch));
-  front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  cameraFront = glm::normalize(front);
-  */
 }
 
 
