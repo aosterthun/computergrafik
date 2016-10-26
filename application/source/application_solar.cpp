@@ -24,13 +24,13 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  planet_object{},
  star_object{},
  planets{},
- stars{}
+ stars{},
+ star_vertex_array{}
 {
-  initializeGeometry();
-  initializeShaderPrograms();
-
   create_scene();
 
+  initializeGeometry();
+  initializeShaderPrograms();
 }
 
 void ApplicationSolar::create_scene() {
@@ -69,10 +69,18 @@ void ApplicationSolar::create_scene() {
 
   for (int i = 0; i < 100; ++i)
   {
-    stars.push_back(Star{});
+    stars.push_back(Star{}); //Star-Ctor uses random values
   }
 
-
+  for (std::vector<Star>::iterator i = stars.begin(); i != stars.end(); ++i)
+  {
+    star_vertex_array.push_back(i->position.x);
+    star_vertex_array.push_back(i->position.y);
+    star_vertex_array.push_back(i->position.z);
+    star_vertex_array.push_back(i->color.x);
+    star_vertex_array.push_back(i->color.y);
+    star_vertex_array.push_back(i->color.z);
+  }
 }
 
 void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
@@ -152,9 +160,8 @@ void ApplicationSolar::uploadUniforms() {
   glUseProgram(m_shaders.at("planet").handle);
   std::cout << "Shader planet bound" << std::endl;
 
-  glUseProgram(m_shaders.at("star").handle);
+  //glUseProgram(m_shaders.at("star").handle);
   std::cout << "Shader star bound" << std::endl;
-
 
   updateView();
   std::cout << "View updated" << std::endl;
@@ -312,18 +319,6 @@ void ApplicationSolar::initializeGeometry() {
   /*
     Star
   */
-  /*
-  std::vector<GLfloat> star_vertex_array;
-  for (std::vector<Star>::iterator i = stars.begin(); i != stars.end(); ++i)
-  {
-    star_vertex_array.push_back(i->position.x);
-    star_vertex_array.push_back(i->position.y);
-    star_vertex_array.push_back(i->position.z);
-    star_vertex_array.push_back(i->color.x);
-    star_vertex_array.push_back(i->color.y);
-    star_vertex_array.push_back(i->color.z);
-  }
-
   model star_model{star_vertex_array, 6};
 
   // generate vertex array object
@@ -358,7 +353,6 @@ void ApplicationSolar::initializeGeometry() {
   star_object.draw_mode = GL_POINTS;
   // transfer number of indices to model object 
   star_object.num_elements = GLsizei(star_model.indices.size());
-  */
 }
 
 ApplicationSolar::~ApplicationSolar() {

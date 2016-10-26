@@ -43,8 +43,9 @@ class ApplicationSolar : public Application {
   model_object star_object;
 
   std::vector<std::shared_ptr<Planet>> planets;
+  
   std::vector<Star> stars;
-
+  std::vector<GLfloat> star_vertex_array;
 };
 
 #endif
