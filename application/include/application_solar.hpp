@@ -40,12 +40,13 @@ class ApplicationSolar : public Application {
 
   // cpu representation of model
   model_object planet_object;
-  model_object star_object;
+  model_object stars_object;
 
   std::vector<std::shared_ptr<Planet>> planets;
-  
   std::vector<Star> stars;
-  std::vector<GLfloat> star_vertex_array;
+
+  std::vector<unsigned> indices;
+  std::vector<GLfloat> stars_f;
 };
 
 #endif
