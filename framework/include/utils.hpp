@@ -29,6 +29,8 @@ namespace utils {
   void output_log(GLchar const* log_buffer, std::string const& prefix);
   // read file and write content to string
   std::string read_file(std::string const& name);
+
+  float RandomFloat(float a, float b);
 }
 
 #endif
