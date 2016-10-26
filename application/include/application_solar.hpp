@@ -4,7 +4,9 @@
 #include "application.hpp"
 #include "model.hpp"
 #include "structs.hpp"
-#include "application_planet.hpp"
+
+#include "planet.hpp"
+#include "star.hpp"
 
 #include <memory>
 
@@ -27,7 +29,7 @@ class ApplicationSolar : public Application {
 
   // draw all objects
   void render() const;
-  std::vector<std::shared_ptr<Planet>> create_scene() const;
+  void create_scene();
 
   void upload_planet_transforms(std::shared_ptr<Planet> const& planet) const;
     
@@ -38,8 +40,11 @@ class ApplicationSolar : public Application {
 
   // cpu representation of model
   model_object planet_object;
+  model_object star_object;
 
   std::vector<std::shared_ptr<Planet>> planets;
+  std::vector<Star> stars;
+
 };
 
 #endif
