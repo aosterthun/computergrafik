@@ -35,10 +35,11 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
 
 std::vector<std::shared_ptr<Planet>> ApplicationSolar::create_scene() const{
 
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.9f, 15.0f);
+  //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.9f, 15.0f);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
-  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.2f, moon_ptr);
+  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.09f, moon_ptr);
   std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury", 0.5f,  1.5f, 5.0f, sun_ptr);
   std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus", 0.25f,  1.3f, 6.6f, sun_ptr);
   std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars", 0.4f, 1.0f, 9.0f, sun_ptr);
@@ -68,18 +69,16 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     // bind shader to upload uniforms
     glUseProgram(m_shaders.at("planet").handle);
 
-    glm::fvec3 turning_axis{0.0f, 1.0f, 0.0f};
+    glm::fmat4 mo_ma;
 
-    glm::fmat4 model_matrix;
-
-    model_matrix *= model_matrix(planet);
-    model_matrix = glm::scale(model_matrix, glm::fvec3{ planet->size, planet->size, planet->size});
+    mo_ma *= model_matrix(planet);
+    mo_ma = glm::scale(mo_ma, glm::fvec3{ planet->size, planet->size, planet->size});
     
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
-                       1, GL_FALSE, glm::value_ptr(model_matrix));
+                       1, GL_FALSE, glm::value_ptr(mo_ma));
 
     // extra matrix for normal transformation to keep them orthogonal to surface
-    glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
+    glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * mo_ma);
 
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                        1, GL_FALSE, glm::value_ptr(normal_matrix));
