@@ -10,10 +10,34 @@ uniform mat4 ModelMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
 
+//phong shading
+uniform mat4 SunPosition;
+uniform vec3  ColorAmbient;
+uniform float Glossiness;
+
+//variables for fragment shader
 out vec3 pass_Normal;
+out vec3 pass_LightRay;
+out vec3 pass_ColorAmbient;
+out float pass_Glossiness;
 
 void main(void)
 {
+	//calculating vertex postion
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
-	pass_Normal = (NormalMatrix * vec4(in_Normal, 0.0)).xyz;
+
+
+	vec3 vertexPosition = vec3(ModelMatrix * vec4(in_Position, 1.0));
+	
+	vec3 lightPosition;
+	lightPosition   = vec3(0.0, 0.0, 0.0);
+	//pass_LightRay = SunPosition * vec4(in_Position, 1.0); //atm sun is at 0 0 0
+	//lightPosition =  vec3(SunPosition * vec4(1.0, 1.0, 1.0, 1.0));
+
+	//passing values for phong shading
+	pass_Normal   =  normalize((NormalMatrix * vec4(in_Normal, 0.0)).xyz);
+	pass_LightRay =  normalize(lightPosition - vertexPosition);
+	
+	pass_ColorAmbient = ColorAmbient;
+	pass_Glossiness   = Glossiness;
 }
