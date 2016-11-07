@@ -16,10 +16,12 @@
 struct Planet
 {
   //CONSTRUCTORS
-  Planet( std::string n, float s, float r, float d):
+  Planet( std::string n, float s, float r, float d, glm::fvec3 const& c):
   name{n},
   size{s},
   rotationSpeed{r},
+  ka{c},
+  kg{1.0f},
   turningAxis{0.0f, 1.0f, 0.0f},
   distance{d},
   reference_planet{nullptr}
@@ -29,6 +31,8 @@ struct Planet
   name{n},
   size{s},
   rotationSpeed{r},
+  ka{1.0, 1.0, 1.0},
+  kg{1.0f},
   turningAxis{a},
   distance{d},
   reference_planet{nullptr}
@@ -38,6 +42,19 @@ struct Planet
   name{n},
   size{s},
   rotationSpeed{r},
+  ka{1.0, 1.0, 1.0},
+  kg{1.0f},
+  turningAxis{0.0f, 1.0f, 0.0f},
+  distance{d},
+  reference_planet{rp}
+  {}
+
+  Planet( std::string n, float s, float r, float d, glm::fvec3 const&c, std::shared_ptr<Planet> rp):
+  name{n},
+  size{s},
+  rotationSpeed{r},
+  ka{c},
+  kg{1.0f},
   turningAxis{0.0f, 1.0f, 0.0f},
   distance{d},
   reference_planet{rp}
@@ -49,6 +66,11 @@ struct Planet
   float size;
   float rotationSpeed;
 
+  //Material
+  glm::fvec3 ka;
+  float kg;
+
+  //Position
   glm::fvec3 turningAxis;
 
   float distance;
