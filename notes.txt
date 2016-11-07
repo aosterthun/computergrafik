@@ -1,0 +1,33 @@
+---------------------------------
+Exercise 3 27.10.2016
+
+Questions:
+Which geometry class? How would it be implemented?
+	wrapper for model that recieves a model_object in the constructor
+
+Are these buffer types for every program?
+
+//Assignment 3
+Diffuse color should be uploaded using a uniform
+
+Normalize everything!
+
+Idea for switching to cel-shading
+sth like: set_shader(int flag)
+{
+	case 1:
+	glUseProgram(...)
+
+	case 2:
+	glUseProgram(...)
+
+	...
+}
+}
+
+
+
+stars:
+glDrawArray instead of glDrawElements
+
+---------------------------------
