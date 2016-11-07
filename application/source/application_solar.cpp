@@ -40,9 +40,9 @@ void ApplicationSolar::create_scene() {
   /*
     Planets
   */
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.03f, 15.0f);
-  //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f);
-  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, sun_ptr);
+  //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.03f,15.0f, glm::fvec3{1.0f, 0.5f, 0.2f});
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f, glm::fvec3{1.0f, 0.5f, 0.2f});
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, glm::fvec3{0.0f, 0.0f, 1.0f},sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
   std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.09f, moon_ptr);
   std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury", 0.5f,  1.5f, 5.0f, sun_ptr);
@@ -94,8 +94,7 @@ void ApplicationSolar::create_scene() {
 }
 
 void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
-    // bind shader to upload uniforms
-    glUseProgram(m_shaders.at("planet").handle);
+
 
     glm::fmat4 mo_ma;
 
@@ -111,6 +110,32 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                        1, GL_FALSE, glm::value_ptr(normal_matrix));
 
+    //Sun Position
+    std::shared_ptr<Planet> sun;
+    if(planet->reference_planet == nullptr){ //current planet is sun
+      sun = planet;
+    }
+    else{ //retrieving sun
+      
+      sun = planet->reference_planet;
+      
+      while(sun->name != "Sun")
+      {
+        sun = sun->reference_planet;
+      }
+    }
+
+    glm::fmat4 mo_ma_sun = model_matrix(sun);
+
+    glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
+
+
+    //Material properties
+    glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->ka.x, planet->ka.y, planet->ka.z);
+    glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"), planet->kg);
+
+
+
     // bind the VAO to draw
     glBindVertexArray(planet_object.vertex_AO);
 
@@ -123,6 +148,7 @@ void ApplicationSolar::render() const {
   /*
     Stars
   */
+  // bind shader to upload uniforms
   glUseProgram(m_shaders.at("star").handle);
 
   //bind VAO of geometry
@@ -133,6 +159,9 @@ void ApplicationSolar::render() const {
   /*
     Planets
   */
+  // bind shader to upload uniforms
+  glUseProgram(m_shaders.at("planet").handle);
+
   for(std::vector<std::shared_ptr<Planet>>::const_iterator i = planets.begin(); i != planets.end(); ++i)
   {
     upload_planet_transforms(*i);
@@ -264,6 +293,11 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ModelMatrix"] = -1;
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
+
+  m_shaders.at("planet").u_locs["SunPosition"] = -1;
+
+  m_shaders.at("planet").u_locs["ColorAmbient"] = 1;
+  m_shaders.at("planet").u_locs["Glossiness"] = 1;
 
   /*
     Star shader
