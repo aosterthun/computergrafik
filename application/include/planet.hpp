@@ -27,6 +27,18 @@ struct Planet
   reference_planet{nullptr}
   {}
 
+  Planet( std::string n, float s, float r, float d, glm::fvec3 const& c, int t):
+  name{n},
+  size{s},
+  rotationSpeed{r},
+  ka{c},
+  kg{1.0f},
+  turningAxis{0.0f, 1.0f, 0.0f},
+  distance{d},
+  reference_planet{nullptr},
+  planetType{t}
+  {}
+
   Planet( std::string n, float s, float r, glm::fvec3 a, float d):
   name{n},
   size{s},
@@ -73,6 +85,7 @@ struct Planet
   //Position
   glm::fvec3 turningAxis;
 
+  int planetType;
   float distance;
   std::shared_ptr<Planet> reference_planet;
 };

@@ -41,7 +41,7 @@ void ApplicationSolar::create_scene() {
     Planets
   */
   //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.03f,15.0f, glm::fvec3{1.0f, 0.5f, 0.2f});
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f, glm::fvec3{1.0f, 0.5f, 0.2f});
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.0f, 0.0f, glm::fvec3{1.0f, 0.5f, 0.2f},1);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",0.14f,  0.3f, 7.0f, glm::fvec3{0.0f, 0.0f, 1.0f},sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon", 0.03f, 0.9f, 0.3f, earth_ptr);
   std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon", 0.01f, 1.1f, 0.09f, moon_ptr);
@@ -133,6 +133,7 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     //Material properties
     glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->ka.x, planet->ka.y, planet->ka.z);
     glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"), planet->kg);
+    glUniform1i(m_shaders.at("planet").u_locs.at("PlanetType"), planet->planetType);
 
 
 
@@ -298,6 +299,7 @@ void ApplicationSolar::initializeShaderPrograms() {
 
   m_shaders.at("planet").u_locs["ColorAmbient"] = 1;
   m_shaders.at("planet").u_locs["Glossiness"] = 1;
+  m_shaders.at("planet").u_locs["PlanetType"] = 1;
 
   /*
     Star shader
