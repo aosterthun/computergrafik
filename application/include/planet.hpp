@@ -1,6 +1,8 @@
 #ifndef APPLICATION_PLANET_HPP
 #define APPLICATION_PLANET_HPP
 
+#include "material.hpp"
+
 #include <memory>
 #include <glbinding/gl/gl.h>
 
@@ -16,78 +18,57 @@
 struct Planet
 {
   //CONSTRUCTORS
-  Planet( std::string n, float s, float r, float d, glm::fvec3 const& c):
+  Planet( std::string n,
+          float s,
+          float r,
+          float d,
+          Material const& m,
+          int t,
+          std::shared_ptr<Planet> rp = nullptr):
   name{n},
   size{s},
   rotationSpeed{r},
-  ka{c},
-  kg{1.0f},
+  distance{d},
+  material{m},
   turningAxis{0.0f, 1.0f, 0.0f},
-  distance{d},
-  reference_planet{nullptr}
-  {}
-
-  Planet( std::string n, float s, float r, float d, glm::fvec3 const& c, int t):
-  name{n},
-  size{s},
-  rotationSpeed{r},
-  ka{c},
-  kg{1.0f},
-  turningAxis{0.0f, 1.0f, 0.0f},
-  distance{d},
-  reference_planet{nullptr},
-  planetType{t}
-  {}
-
-  Planet( std::string n, float s, float r, glm::fvec3 a, float d):
-  name{n},
-  size{s},
-  rotationSpeed{r},
-  ka{1.0, 1.0, 1.0},
-  kg{1.0f},
-  turningAxis{a},
-  distance{d},
-  reference_planet{nullptr}
-  {}
-
-  Planet( std::string n, float s, float r, float d, std::shared_ptr<Planet> rp):
-  name{n},
-  size{s},
-  rotationSpeed{r},
-  ka{1.0, 1.0, 1.0},
-  kg{1.0f},
-  turningAxis{0.0f, 1.0f, 0.0f},
-  distance{d},
+  planetType{t},
   reference_planet{rp}
   {}
 
-  Planet( std::string n, float s, float r, float d, glm::fvec3 const&c, std::shared_ptr<Planet> rp):
+  Planet( std::string n,
+          float s,
+          float r,
+          float d,
+          int t,
+          std::shared_ptr<Planet> rp = nullptr):
   name{n},
   size{s},
   rotationSpeed{r},
-  ka{c},
-  kg{1.0f},
-  turningAxis{0.0f, 1.0f, 0.0f},
   distance{d},
+  material{{1.0f, 1.0f, 1.0f}},
+  turningAxis{0.0f, 1.0f, 0.0f},
+  planetType{t},
   reference_planet{rp}
   {}
 
   //MEMBERS
+  //Properties
   std::string name;
 
   float size;
   float rotationSpeed;
 
-  //Material
-  glm::fvec3 ka;
-  float kg;
-
   //Position
   glm::fvec3 turningAxis;
-
-  int planetType;
   float distance;
   std::shared_ptr<Planet> reference_planet;
+
+  //Material
+  Material material;
+
+  //Shader
+  int planetType;
+
 };
 
 glm::fmat4 model_matrix(std::shared_ptr<Planet> const& planet)
