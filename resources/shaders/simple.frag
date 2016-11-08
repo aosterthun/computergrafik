@@ -29,7 +29,7 @@ void main() {
 	//Specular
 	vec3 h = normalize(pass_ViewRay + pass_LightRay);
 
-	vec3 color_s = vec3(1.0,1.0,1.0) * light_s * pow(max(0.0f,dot(pass_Normal,h)),20.0);
+	vec3 color_s = vec3(1.0,1.0,1.0) * light_s * pow(max(0.0f,dot(pass_Normal,h)),pass_Glossiness);
 
 	color = color + color_s;
 

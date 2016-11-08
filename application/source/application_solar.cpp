@@ -24,6 +24,8 @@ using namespace gl;
 
 #define SHADER_PLANET 0
 #define SHADER_SUN 1
+#define PLANET_SCALE 0.01
+#define ORBIT_SCALE 1
 
 ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  Application{resource_path},
@@ -43,22 +45,30 @@ void ApplicationSolar::create_scene() {
 
   Material sun_material{{1.0f, 0.5f, 0.2f}};
   Material earth_material{{0.0f, 0.0f, 1.0f}};
+  Material moon_material{{0.4f, 0.4f, 0.4f}};
+  Material mercury_material{{0.0f, 1.0f, 1.0f}};
+  Material venus_material{{0.5f, 1.0f, 0.0f}};
+  Material mars_material{{0.0f, 0.0f, 1.0f}};
+  Material jupiter_material{{1.0f, 0.0f, 0.0f}};
+  Material saturn_material{{0.0f, 0.0f, 1.0f}};
+  Material uranus_material{{1.0f, 1.0f, 0.0f}};
+  Material neptun_material{{1.0f, 1.0f, 0.0f}};
 
   /*
     Planets
   */
   //std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun", 1.0f, 0.03f,15.0f, glm::fvec3{1.0f, 0.5f, 0.2f});
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   sun_material, SHADER_SUN);
-  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, earth_material, SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  SHADER_PLANET, earth_ptr);
-  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, SHADER_PLANET, moon_ptr);
-  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  0.43f, 0.9f, 12.0f, SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      18.0f * PLANET_SCALE, 0.0f, 0.0f * ORBIT_SCALE,   sun_material, SHADER_SUN);
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    1.0f * PLANET_SCALE,  0.3f, 1.0f * ORBIT_SCALE, earth_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f * PLANET_SCALE, 0.9f, 0.3f * ORBIT_SCALE,  moon_material, SHADER_PLANET, earth_ptr);
+  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f * PLANET_SCALE, 1.1f, 0.09f * ORBIT_SCALE, moon_material, SHADER_PLANET, moon_ptr);
+  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.38f * PLANET_SCALE,  1.5f, 0.387f * ORBIT_SCALE,  mercury_material,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.95f * PLANET_SCALE,  1.3f, 0.723f * ORBIT_SCALE, venus_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.53f * PLANET_SCALE, 1.0f, 1.52f * ORBIT_SCALE,   mars_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  11.19f * PLANET_SCALE, 0.9f, 5.20f * ORBIT_SCALE, jupiter_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   9.4f * PLANET_SCALE, 0.6f, 9.58f * ORBIT_SCALE, saturn_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   4.04f * PLANET_SCALE, 0.3f, 19.20f * ORBIT_SCALE, uranus_material, SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);
