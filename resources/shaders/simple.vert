@@ -14,12 +14,15 @@ uniform mat4 ProjectionMatrix;
 uniform mat4 SunPosition;
 uniform vec3  ColorAmbient;
 uniform float Glossiness;
+uniform int PlanetType;
 
 //variables for fragment shader
 out vec3 pass_Normal;
 out vec3 pass_LightRay;
 out vec3 pass_ColorAmbient;
+out vec3 pass_ViewRay;
 out float pass_Glossiness;
+flat out int pass_PlanetType;
 
 void main(void)
 {
@@ -37,7 +40,9 @@ void main(void)
 	//passing values for phong shading
 	pass_Normal   =  normalize((NormalMatrix * vec4(in_Normal, 0.0)).xyz);
 	pass_LightRay =  normalize(lightPosition - vertexPosition);
-	
+	pass_ViewRay  =  normalize(-vertexPosition.xyz);
+
 	pass_ColorAmbient = ColorAmbient;
 	pass_Glossiness   = Glossiness;
+	pass_PlanetType   = PlanetType;
 }
