@@ -40,7 +40,7 @@ void main(void)
 	//passing values for phong shading
 	pass_Normal   =  normalize((NormalMatrix * vec4(in_Normal, 0.0)).xyz);
 	pass_LightRay =  normalize(lightPosition - vertexPosition);
-	pass_ViewRay  =  normalize(-vertexPosition.xyz);
+	pass_ViewRay  =  normalize(pass_LightRay-vertexPosition.xyz);
 
 	pass_ColorAmbient = ColorAmbient;
 	pass_Glossiness   = Glossiness;
