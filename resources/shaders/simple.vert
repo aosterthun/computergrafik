@@ -30,8 +30,8 @@ void main(void)
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
 
 
-	vec3 planetPosition = vec3(ModelMatrix * vec4(in_Position, 1.0));
-	
+	vec3 planetPosition = vec3((ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0));
+
 	vec3 lightPosition = vec3(0.0, 0.0, 0.0); // vec3(SunPosition * vec4(1.0, 1.0, 1.0, 1.0));
 
 	//passing values for phong shading
