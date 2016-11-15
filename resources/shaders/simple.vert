@@ -30,17 +30,14 @@ void main(void)
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
 
 
-	vec3 vertexPosition = vec3(ModelMatrix * vec4(in_Position, 1.0));
+	vec3 planetPosition = vec3(ModelMatrix * vec4(in_Position, 1.0));
 	
-	vec3 lightPosition;
-	lightPosition   = vec3(0.0, 0.0, 0.0);
-	//pass_LightRay = SunPosition * vec4(in_Position, 1.0); //atm sun is at 0 0 0
-	//lightPosition =  vec3(SunPosition * vec4(1.0, 1.0, 1.0, 1.0));
+	vec3 lightPosition = vec3(0.0, 0.0, 0.0); // vec3(SunPosition * vec4(1.0, 1.0, 1.0, 1.0));
 
 	//passing values for phong shading
 	pass_Normal   =  normalize((NormalMatrix * vec4(in_Normal, 0.0)).xyz);
-	pass_LightRay =  normalize(lightPosition - vertexPosition);
-	pass_ViewRay  =  normalize(pass_LightRay-vertexPosition.xyz);
+	pass_LightRay =  normalize(lightPosition - planetPosition.xyz);
+	pass_ViewRay  =  normalize(- planetPosition.xyz); //normalize(pass_LightRay-planetPosition.xyz);
 
 	pass_ColorAmbient = ColorAmbient;
 	pass_Glossiness   = Glossiness;
