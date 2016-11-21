@@ -71,10 +71,10 @@ void ApplicationSolar::create_scene() {
   // std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   4.04f * PLANET_SCALE, 0.3f, 19.20f * ORBIT_SCALE, uranus_material, SHADER_PLANET, sun_ptr);
   // std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
 
-                            //build/Debug/..
-  std::string resource_dir = "/../../resources/textures/";
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "sun.jpg"    , SHADER_SUN);
-  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, resource_dir + "earth.jpg"  , SHADER_PLANET, sun_ptr);
+  std::string resource_dir = "/home/manuel/universitaet/ws1617/cg/exercise/computergrafik/resources/textures/";
+
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "earth.png"    , SHADER_SUN);
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, resource_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
   std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_PLANET, moon_ptr);
   std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  resource_dir + "mercury.jpg" ,SHADER_PLANET, sun_ptr);
@@ -173,15 +173,19 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
 
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
 
-    pixel_data texture_data = texture_loader::file(planet->texture_path);
-    auto texture_object = utils::create_texture_object(texture_data);
-    
-    glActiveTexture(GL_TEXTURE0+planet->texture_handle);
-    glBindTexture(texture_object.target, texture_object.handle);
+    //Texture
+    if(planet->texture_path != "NONE")
+    {
+      pixel_data texture_data = texture_loader::file(planet->texture_path);
 
-    int sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "pass_TexColor");
-    glUniform1i(sampler_location, planet->texture_handle);
+      auto texture_object = utils::create_texture_object(texture_data);
+      
+      glActiveTexture(GL_TEXTURE0+planet->texture_handle);
+      glBindTexture(texture_object.target, texture_object.handle);
 
+      int sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "pass_TexColor");
+      glUniform1i(sampler_location, planet->texture_handle);
+    }
 
     //Material properties
     glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->material.a.x, planet->material.a.y, planet->material.a.z);
