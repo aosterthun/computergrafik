@@ -69,6 +69,7 @@ void ApplicationSolar::create_scene() {
   // std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   9.4f * PLANET_SCALE, 0.6f, 9.58f * ORBIT_SCALE, saturn_material, SHADER_PLANET, sun_ptr);
   // std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   4.04f * PLANET_SCALE, 0.3f, 19.20f * ORBIT_SCALE, uranus_material, SHADER_PLANET, sun_ptr);
   // std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
+
                             //build/Debug/..
   std::string resource_dir = "../../resources/textures/";
   std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "sun.jpg"    , SHADER_SUN);
@@ -94,6 +95,18 @@ void ApplicationSolar::create_scene() {
   planets.push_back(saturn_ptr);
   planets.push_back(uranus_ptr);
   planets.push_back(neptune_ptr);
+
+  //setting texture indices
+  for(int i = 0; i < planets.size(); ++i)
+  {
+    planets.at(i)->texture_handle = i;
+  }
+
+  //std::cout << "Texture handles: " << std::endl;
+  //for(auto p : planets)
+  //{
+  //  std::cout << p->name << " " << p->texture_handle << std::endl;
+  //}
 
   /*
     Stars

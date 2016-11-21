@@ -31,6 +31,7 @@ struct Planet
   distance{d},
   material{m},
   texture_path{"NONE"},
+  texture_handle{0},
   turningAxis{0.0f, 1.0f, 0.0f},
   planetType{t},
   reference_planet{rp}
@@ -49,6 +50,7 @@ struct Planet
   distance{d},
   material{{1.0f, 1.0f, 1.0f}},
   texture_path{tp},
+  texture_handle{0},
   turningAxis{0.0f, 1.0f, 0.0f},
   planetType{t},
   reference_planet{rp}
@@ -66,6 +68,7 @@ struct Planet
   distance{d},
   material{{1.0f, 1.0f, 1.0f}},
   texture_path{"NONE"},
+  texture_handle{0},
   turningAxis{0.0f, 1.0f, 0.0f},
   planetType{t},
   reference_planet{rp}
@@ -88,6 +91,7 @@ struct Planet
 
   //Texture path
   std::string texture_path;
+  int texture_handle;
 
   //Shader
   int planetType;
