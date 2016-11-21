@@ -370,6 +370,9 @@ void ApplicationSolar::initializeGeometry() {
   // second attribute is 3 floats with no offset & stride
   glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::NORMAL]);
 
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::TEXCOORD]);
+
    // generate generic buffer
   glGenBuffers(1, &planet_object.element_BO);
   // bind this as an vertex array buffer containing all attributes
