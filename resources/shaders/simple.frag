@@ -6,6 +6,7 @@ in  vec3 pass_ViewRay;
 
 in  vec3 pass_ColorAmbient;
 in  float pass_Glossiness;
+uniform sampler2D pass_TexColor;
 in vec2 pass_TexCoord;
 flat in  int pass_PlanetType; 
 

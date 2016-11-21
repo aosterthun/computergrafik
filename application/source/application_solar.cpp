@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include "shader_loader.hpp"
 #include "model_loader.hpp"
+#include "texture_loader.hpp"
 #include "material.hpp"
 
 #include <glbinding/gl/gl.h>
@@ -71,7 +72,7 @@ void ApplicationSolar::create_scene() {
   // std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
 
                             //build/Debug/..
-  std::string resource_dir = "../../resources/textures/";
+  std::string resource_dir = "/../../resources/textures/";
   std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "sun.jpg"    , SHADER_SUN);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, resource_dir + "earth.jpg"  , SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
@@ -171,6 +172,15 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     glm::fmat4 mo_ma_sun = model_matrix(sun);
 
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
+
+    pixel_data texture_data = texture_loader::file(planet->texture_path);
+    auto texture_object = utils::create_texture_object(texture_data);
+    
+    glActiveTexture(GL_TEXTURE0+planet->texture_handle);
+    glBindTexture(texture_object.target, texture_object.handle);
+
+    int sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "pass_TexColor");
+    glUniform1i(sampler_location, planet->texture_handle);
 
 
     //Material properties
