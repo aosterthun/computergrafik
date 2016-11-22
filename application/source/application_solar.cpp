@@ -71,19 +71,19 @@ void ApplicationSolar::create_scene() {
   // std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   4.04f * PLANET_SCALE, 0.3f, 19.20f * ORBIT_SCALE, uranus_material, SHADER_PLANET, sun_ptr);
   // std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
 
-  std::string resource_dir = "/home/manuel/universitaet/ws1617/cg/exercise/computergrafik/resources/textures/";
+  std::string texture_dir = m_resource_path + "/textures/";
 
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "earth.png"    , SHADER_SUN);
-  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, resource_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   texture_dir + "sun.png"    , SHADER_SUN);
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, texture_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
   std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_PLANET, moon_ptr);
-  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  resource_dir + "mercury.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, resource_dir + "venus.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   resource_dir + "mars.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  0.43f, 0.9f, 12.0f, resource_dir + "jupiter.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, resource_dir + "saturn.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, resource_dir + "uranus.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, resource_dir + "neptune.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  texture_dir + "mercury.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, texture_dir + "venus.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   texture_dir + "mars.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  0.43f, 0.9f, 12.0f, texture_dir + "jupiter.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, texture_dir + "saturn.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, texture_dir + "uranus.png" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, texture_dir + "neptune.png" ,SHADER_PLANET, sun_ptr);
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);
@@ -374,7 +374,7 @@ void ApplicationSolar::initializeGeometry() {
   /*
     Planet
   */
-  model planet_model = model_loader::obj(m_resource_path + "models/sphere.obj", model::NORMAL);
+  model planet_model = model_loader::obj(m_resource_path + "models/sphere.obj", model::NORMAL | model::TEXCOORD);
 
   // generate vertex array object
   glGenVertexArrays(1, &planet_object.vertex_AO);
