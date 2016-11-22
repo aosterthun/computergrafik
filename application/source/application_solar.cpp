@@ -142,6 +142,9 @@ void ApplicationSolar::create_scene() {
 void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
 
 
+    /*
+      Model matrix
+    */
     glm::fmat4 mo_ma;
 
     mo_ma *= model_matrix(planet);
@@ -156,7 +159,10 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                        1, GL_FALSE, glm::value_ptr(normal_matrix));
 
-    //Sun Position
+    /*
+      Lighting
+    */
+    //retrieving sun position
     std::shared_ptr<Planet> sun;
     if(planet->reference_planet == nullptr){ //current planet is sun
       sun = planet;
@@ -175,7 +181,16 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
 
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
 
-    //Texture
+    //Material properties
+    glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->material.a.x,
+                                                                  planet->material.a.y,
+                                                                  planet->material.a.z);
+    glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"),   planet->material.g);
+    glUniform1i(m_shaders.at("planet").u_locs.at("PlanetType"),   planet->planetType);
+
+    /*
+      Texturing
+    */
     //std::cout << "Loading: " << planet->texture_path << std::endl;
     if(texture_map.find(planet->name) != texture_map.end())
     {
@@ -193,10 +208,7 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
       std::cout << "Well, this shouldn't happen, using material" << std::endl;
     }
 
-    //Material properties
-    glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->material.a.x, planet->material.a.y, planet->material.a.z);
-    glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"), planet->material.g);
-    glUniform1i(m_shaders.at("planet").u_locs.at("PlanetType"), planet->planetType);
+
 
 
 

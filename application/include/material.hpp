@@ -13,7 +13,7 @@ struct Material
 	a{v},
 	d{v},
 	s{v},
-	g{30.0f}
+	g{250.0f}
 	{}
 
 	glm::fvec3 a, d, s;

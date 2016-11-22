@@ -37,5 +37,5 @@ void main() {
 	//overall
 	out_Color = vec4(color, 1.0);
 
-	out_Color = texture(pass_TexColor, pass_TexCoord);
+	//out_Color = texture(pass_TexColor, pass_TexCoord);
 }
