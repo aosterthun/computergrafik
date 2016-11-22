@@ -35,11 +35,13 @@ class ApplicationSolar : public Application {
  protected:
   void initializeShaderPrograms();
   void initializeGeometry();
+  void initializeTextures();
   void updateView();
 
   //planets
   model_object planet_object; // cpu representation of model
   std::vector<std::shared_ptr<Planet>> planets;
+  std::map<std::string, texture_object> texture_map;
 
   //stars
   model_object stars_object; // cpu representation of model

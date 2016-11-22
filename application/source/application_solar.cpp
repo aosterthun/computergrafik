@@ -32,6 +32,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  Application{resource_path},
  planet_object{},
  planets{},
+ texture_map{},
  stars_object{},
  stars_indices{},
  stars_f{}
@@ -39,6 +40,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
   create_scene();
 
   initializeGeometry();
+  initializeTextures();
   initializeShaderPrograms();
 }
 
@@ -71,24 +73,24 @@ void ApplicationSolar::create_scene() {
   // std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   4.04f * PLANET_SCALE, 0.3f, 19.20f * ORBIT_SCALE, uranus_material, SHADER_PLANET, sun_ptr);
   // std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  3.88f * PLANET_SCALE, 0.4f, 30.05f * ORBIT_SCALE, neptun_material, SHADER_PLANET, sun_ptr);
 
-  std::string resource_dir = "/home/manuel/universitaet/ws1617/cg/exercise/computergrafik/resources/textures/";
+  std::string texture_dir = m_resource_path + "/textures/";
 
-  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   resource_dir + "earth.png"    , SHADER_SUN);
-  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, resource_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
-  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_PLANET, moon_ptr);
-  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  resource_dir + "mercury.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, resource_dir + "venus.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   resource_dir + "mars.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  0.43f, 0.9f, 12.0f, resource_dir + "jupiter.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, resource_dir + "saturn.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, resource_dir + "uranus.jpg" ,SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, resource_dir + "neptune.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   texture_dir + "sun.jpg"    , SHADER_SUN);
+  std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, texture_dir + "earth.jpg"  , SHADER_PLANET, sun_ptr);
+  //std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
+  //std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_PLANET, moon_ptr);
+  std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  texture_dir + "mercury.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, texture_dir + "venus.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   texture_dir + "mars.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> jupiter_ptr  = std::make_shared<Planet>("Jupiter",  0.43f, 0.9f, 12.0f, texture_dir + "jupiter.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, texture_dir + "saturn.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, texture_dir + "uranus.jpg" ,SHADER_PLANET, sun_ptr);
+  std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, texture_dir + "neptune.jpg" ,SHADER_PLANET, sun_ptr);
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);
-  planets.push_back(moon_ptr);
-  planets.push_back(m_o_m_ptr);
+  //planets.push_back(moon_ptr);
+  //planets.push_back(m_o_m_ptr);
   planets.push_back(mercury_ptr);
   planets.push_back(venus_ptr);
   planets.push_back(mars_ptr);
@@ -174,17 +176,21 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
 
     //Texture
-    if(planet->texture_path != "NONE")
+    //std::cout << "Loading: " << planet->texture_path << std::endl;
+    if(texture_map.find(planet->name) != texture_map.end())
     {
-      pixel_data texture_data = texture_loader::file(planet->texture_path);
-
-      auto texture_object = utils::create_texture_object(texture_data);
+      auto texture_object = texture_map.at(planet->name);
       
       glActiveTexture(GL_TEXTURE0+planet->texture_handle);
       glBindTexture(texture_object.target, texture_object.handle);
 
       int sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "pass_TexColor");
       glUniform1i(sampler_location, planet->texture_handle);
+    }
+    else
+    {
+      //removed moons for this case
+      std::cout << "Well, this shouldn't happen, using material" << std::endl;
     }
 
     //Material properties
@@ -397,6 +403,7 @@ void ApplicationSolar::initializeGeometry() {
   // second attribute is 3 floats with no offset & stride
   glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::NORMAL]);
 
+  //Textures
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::TEXCOORD]);
 
@@ -449,6 +456,27 @@ void ApplicationSolar::initializeGeometry() {
   // transfer number of indices to model object 
   stars_object.num_elements = GLsizei(NUM_STARS);
 }
+
+void ApplicationSolar::initializeTextures() {
+
+  for(int i = 0; i < planets.size(); ++i)
+  {
+    if(planets.at(i)->texture_path != "NONE")
+    {   
+      pixel_data texture_data = texture_loader::file(planets.at(i)->texture_path);
+
+      texture_object tex_obj = utils::create_texture_object(texture_data);
+
+      texture_map.insert(std::pair<std::string, texture_object>(planets.at(i)->name, tex_obj));
+    }
+    else
+    {
+      std::cout << "No texture given for planet " << planets.at(i)->name << std::endl;
+    }
+  }
+}
+
+
 
 ApplicationSolar::~ApplicationSolar() {
   //planets

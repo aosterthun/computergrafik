@@ -13,7 +13,6 @@ flat in  int pass_PlanetType;
 out vec4 out_Color;
 
 void main() {
-	
 	//Ambient + Diffuse + Specular
 	vec3 light_a = vec3(0.2, 0.2, 0.2);
 	vec3 light_d = vec3(0.5, 0.5, 0.5);
@@ -37,4 +36,6 @@ void main() {
 
 	//overall
 	out_Color = vec4(color, 1.0);
+
+	out_Color = texture(pass_TexColor, pass_TexCoord);
 }
