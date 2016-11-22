@@ -32,6 +32,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
  Application{resource_path},
  planet_object{},
  planets{},
+ texture_map{},
  stars_object{},
  stars_indices{},
  stars_f{}
@@ -39,6 +40,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path):
   create_scene();
 
   initializeGeometry();
+  initializeTextures();
   initializeShaderPrograms();
 }
 
@@ -87,8 +89,8 @@ void ApplicationSolar::create_scene() {
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);
-  planets.push_back(moon_ptr);
-  planets.push_back(m_o_m_ptr);
+  //planets.push_back(moon_ptr);
+  //planets.push_back(m_o_m_ptr);
   planets.push_back(mercury_ptr);
   planets.push_back(venus_ptr);
   planets.push_back(mars_ptr);
@@ -140,6 +142,9 @@ void ApplicationSolar::create_scene() {
 void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& planet) const{
 
 
+    /*
+      Model matrix
+    */
     glm::fmat4 mo_ma;
 
     mo_ma *= model_matrix(planet);
@@ -154,7 +159,10 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                        1, GL_FALSE, glm::value_ptr(normal_matrix));
 
-    //Sun Position
+    /*
+      Lighting
+    */
+    //retrieving sun position
     std::shared_ptr<Planet> sun;
     if(planet->reference_planet == nullptr){ //current planet is sun
       sun = planet;
@@ -173,12 +181,20 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
 
     glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("SunPosition"), 1, GL_FALSE, glm::value_ptr(mo_ma_sun));
 
-    //Texture
-    if(planet->texture_path != "NONE")
-    {
-      pixel_data texture_data = texture_loader::file(planet->texture_path);
+    //Material properties
+    glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->material.a.x,
+                                                                  planet->material.a.y,
+                                                                  planet->material.a.z);
+    glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"),   planet->material.g);
+    glUniform1i(m_shaders.at("planet").u_locs.at("PlanetType"),   planet->planetType);
 
-      auto texture_object = utils::create_texture_object(texture_data);
+    /*
+      Texturing
+    */
+    //std::cout << "Loading: " << planet->texture_path << std::endl;
+    if(texture_map.find(planet->name) != texture_map.end())
+    {
+      auto texture_object = texture_map.at(planet->name);
       
       glActiveTexture(GL_TEXTURE0+planet->texture_handle);
       glBindTexture(texture_object.target, texture_object.handle);
@@ -186,11 +202,13 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
       int sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "pass_TexColor");
       glUniform1i(sampler_location, planet->texture_handle);
     }
+    else
+    {
+      //removed moons for this case
+      std::cout << "Well, this shouldn't happen, using material" << std::endl;
+    }
 
-    //Material properties
-    glUniform3f(m_shaders.at("planet").u_locs.at("ColorAmbient"), planet->material.a.x, planet->material.a.y, planet->material.a.z);
-    glUniform1f(m_shaders.at("planet").u_locs.at("Glossiness"), planet->material.g);
-    glUniform1i(m_shaders.at("planet").u_locs.at("PlanetType"), planet->planetType);
+
 
 
 
@@ -397,6 +415,7 @@ void ApplicationSolar::initializeGeometry() {
   // second attribute is 3 floats with no offset & stride
   glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::NORMAL]);
 
+  //Textures
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::TEXCOORD]);
 
@@ -449,6 +468,27 @@ void ApplicationSolar::initializeGeometry() {
   // transfer number of indices to model object 
   stars_object.num_elements = GLsizei(NUM_STARS);
 }
+
+void ApplicationSolar::initializeTextures() {
+
+  for(int i = 0; i < planets.size(); ++i)
+  {
+    if(planets.at(i)->texture_path != "NONE")
+    {   
+      pixel_data texture_data = texture_loader::file(planets.at(i)->texture_path);
+
+      texture_object tex_obj = utils::create_texture_object(texture_data);
+
+      texture_map.insert(std::pair<std::string, texture_object>(planets.at(i)->name, tex_obj));
+    }
+    else
+    {
+      std::cout << "No texture given for planet " << planets.at(i)->name << std::endl;
+    }
+  }
+}
+
+
 
 ApplicationSolar::~ApplicationSolar() {
   //planets

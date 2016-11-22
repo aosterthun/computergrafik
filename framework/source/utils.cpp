@@ -14,7 +14,6 @@ namespace utils {
 
 texture_object create_texture_object(pixel_data const& tex) {
   texture_object t_obj{};
-
   t_obj.target = GL_TEXTURE_2D;
 
   glGenTextures(1, &t_obj.handle);

@@ -18,8 +18,7 @@ void main() {
 	vec3 ka = vec3(texture.x,texture.y,texture.z);
 	vec3 kd = vec3(texture.x,texture.y,texture.z);
 	vec3 ks = vec3(1.0f,1.0f,1.0f); //white
-
-
+	
 	//Ambient + Diffuse + Specular
 	vec3 light_a = vec3(0.2, 0.2, 0.2);
 	vec3 light_d = vec3(0.5, 0.5, 0.5);
@@ -43,4 +42,6 @@ void main() {
 
 	//overall
 	out_Color = vec4(color, 1.0);
+
+	//out_Color = texture(pass_TexColor, pass_TexCoord);
 }

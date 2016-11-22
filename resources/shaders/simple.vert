@@ -23,7 +23,11 @@ out vec3 pass_LightRay;
 out vec3 pass_ColorAmbient;
 out vec3 pass_ViewRay;
 out float pass_Glossiness;
+
+//Cel-Shading & sun
 flat out int pass_PlanetType;
+
+//Texturing
 out vec2 pass_TexCoord;
 
 void main(void)

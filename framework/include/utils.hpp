@@ -31,6 +31,7 @@ namespace utils {
   std::string read_file(std::string const& name);
 
   float RandomFloat(float a, float b);
+
 }
 
 #endif
