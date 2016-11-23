@@ -13,20 +13,16 @@ using namespace gl;
 namespace utils {
 
 texture_object create_texture_object(pixel_data const& tex) {
-  texture_object t_obj{};
-  t_obj.target = GL_TEXTURE_2D;
+  texture_object object{};
+  object.target = GL_TEXTURE_2D;
 
-  glGenTextures(1, &t_obj.handle);
-  glBindTexture(t_obj.target, t_obj.handle);
+  glGenTextures(1, &object.handle);
+  glBindTexture(object.target, object.handle);
+  glTexParameteri(object.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(object.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(object.target, 0, GLint(GL_RGB), tex.width, tex.height, 0, tex.channels, tex.channel_type, &tex.pixels[0]);
 
-  glTexParameteri(t_obj.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(t_obj.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glTexImage2D(t_obj.target, 0, GLint(GL_RGB), tex.width, tex.height, 0, tex.channels, tex.channel_type, &tex.pixels[0]);
-
-  //throw std::logic_error("Texture Object creation not implemented yet");
-
-  return t_obj;
+  return object;
 }
 
 void print_bound_textures() {

@@ -13,11 +13,22 @@ flat in  int pass_PlanetType;
 out vec4 out_Color;
 
 void main() {
-	vec4 texture = texture(pass_TexColor, pass_TexCoord); 
+	vec4 tex_color;
+	vec3 ka,kd,ks;
+	if(pass_PlanetType != 3)
+	{
+		tex_color = texture(pass_TexColor, pass_TexCoord); 
+		ka = vec3(tex_color.x,tex_color.y,tex_color.z);
+		kd = vec3(tex_color.x,tex_color.y,tex_color.z);
+		ks = vec3(1.0f,1.0f,1.0f); //white
+	}
+	else
+	{
+		ka = pass_ColorAmbient;
+		kd = ka;
+		ks = vec3(1.0f,1.0f,1.0f); //white
+	}
 
-	vec3 ka = vec3(texture.x,texture.y,texture.z);
-	vec3 kd = vec3(texture.x,texture.y,texture.z);
-	vec3 ks = vec3(1.0f,1.0f,1.0f); //white
 
 	//Ambient + Diffuse + Specular
 	vec3 light_a = vec3(0.2, 0.2, 0.2);
@@ -42,7 +53,7 @@ void main() {
 
 	if(pass_PlanetType == 2)
 	{
-		out_Color = texture;
+		out_Color = tex_color;
 	}
 	else
 	{

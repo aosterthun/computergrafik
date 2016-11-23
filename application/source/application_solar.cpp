@@ -26,6 +26,7 @@ using namespace gl;
 #define SHADER_PLANET 0
 #define SHADER_SUN 1
 #define SHADER_SKYBOX 2
+#define SHADER_MOON 3
 #define PLANET_SCALE 0.01
 #define ORBIT_SCALE 1
 
@@ -80,8 +81,8 @@ void ApplicationSolar::create_scene() {
 
   std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   texture_dir + "sun.png"    , SHADER_SUN);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, texture_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
-  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
-  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_PLANET, moon_ptr);
+  std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_MOON, earth_ptr);
+  std::shared_ptr<Planet> m_o_m_ptr    = std::make_shared<Planet>("Moon",     0.01f, 1.1f, 0.09f, moon_material               , SHADER_MOON, moon_ptr);
   std::shared_ptr<Planet> mercury_ptr  = std::make_shared<Planet>("Mercury",  0.5f,  1.5f, 5.0f,  texture_dir + "mercury.png" ,SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> venus_ptr    = std::make_shared<Planet>("Venus",    0.25f,  1.3f, 6.6f, texture_dir + "venus.png" ,SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> mars_ptr     = std::make_shared<Planet>("Mars",     0.4f, 1.0f, 9.0f,   texture_dir + "mars.png" ,SHADER_PLANET, sun_ptr);
@@ -94,8 +95,8 @@ void ApplicationSolar::create_scene() {
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);
-  //planets.push_back(moon_ptr);
-  //planets.push_back(m_o_m_ptr);
+  planets.push_back(moon_ptr);
+  planets.push_back(m_o_m_ptr);
   planets.push_back(mercury_ptr);
   planets.push_back(venus_ptr);
   planets.push_back(mars_ptr);
@@ -109,12 +110,6 @@ void ApplicationSolar::create_scene() {
   {
     planets.at(i)->texture_handle = i;
   }
-
-  //std::cout << "Texture handles: " << std::endl;
-  //for(auto p : planets)
-  //{
-  //  std::cout << p->name << " " << p->texture_handle << std::endl;
-  //}
 
   /*
     Stars
@@ -209,8 +204,7 @@ void ApplicationSolar::upload_planet_transforms(std::shared_ptr<Planet> const& p
     }
     else
     {
-      //removed moons for this case
-      std::cout << "Well, this shouldn't happen, using material" << std::endl;
+      //moons without textures are handled by SHADER_MOON within the shader
     }
 
 
