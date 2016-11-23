@@ -27,7 +27,7 @@ void main() {
 	if(pass_PlanetType == 1){
 		light_a = vec3(0.0, 0.0, 0.0);
 	}
-	
+
 	vec3 ambient = ka * light_a;
 	vec3 diffuse = ka * light_d; //ambient == diffuse
 
@@ -40,8 +40,12 @@ void main() {
 
 	color = color + color_s;
 
-	//overall
-	out_Color = vec4(color, 1.0);
-
-	//out_Color = texture(pass_TexColor, pass_TexCoord);
+	if(pass_PlanetType == 2)
+	{
+		out_Color = texture;
+	}
+	else
+	{
+		out_Color = vec4(color, 1.0);
+	}
 }

@@ -25,6 +25,7 @@ using namespace gl;
 
 #define SHADER_PLANET 0
 #define SHADER_SUN 1
+#define SHADER_SKYBOX 2
 #define PLANET_SCALE 0.01
 #define ORBIT_SCALE 1
 
@@ -75,6 +76,8 @@ void ApplicationSolar::create_scene() {
 
   std::string texture_dir = m_resource_path + "/textures/";
 
+  std::shared_ptr<Planet> skybox      = std::make_shared<Planet>("Skybox",      70.0f, 0.0f, 0.0f,   texture_dir + "skybox.png"    , SHADER_SKYBOX);
+
   std::shared_ptr<Planet> sun_ptr      = std::make_shared<Planet>("Sun",      1.0f, 0.0f, 0.0f,   texture_dir + "sun.png"    , SHADER_SUN);
   std::shared_ptr<Planet> earth_ptr    = std::make_shared<Planet>("Earth",    0.14f,  0.3f, 7.0f, texture_dir + "earth.png"  , SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> moon_ptr     = std::make_shared<Planet>("Moon",     0.03f, 0.9f, 0.3f,  moon_material               , SHADER_PLANET, earth_ptr);
@@ -86,6 +89,8 @@ void ApplicationSolar::create_scene() {
   std::shared_ptr<Planet> saturn_ptr   = std::make_shared<Planet>("Saturn",   0.22f, 0.6f, 14.0f, texture_dir + "saturn.png" ,SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> uranus_ptr   = std::make_shared<Planet>("Uranus",   0.42f, 0.3f, 16.0f, texture_dir + "uranus.png" ,SHADER_PLANET, sun_ptr);
   std::shared_ptr<Planet> neptune_ptr  = std::make_shared<Planet>("Neptune",  0.15f, 0.4f, 19.0f, texture_dir + "neptune.png" ,SHADER_PLANET, sun_ptr);
+
+  planets.push_back(skybox);
 
   planets.push_back(sun_ptr);
   planets.push_back(earth_ptr);

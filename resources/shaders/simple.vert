@@ -35,6 +35,7 @@ void main(void)
 	//calculating vertex postion
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
 
+	
 
 	vec3 planetPosition = vec3((ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0));
 
@@ -42,6 +43,12 @@ void main(void)
 
 	//passing values for phong shading
 	pass_Normal   =  normalize((NormalMatrix * vec4(in_Normal, 0.0)).xyz);
+
+	if(PlanetType == 2) //skybox
+	{
+		pass_Normal = -pass_Normal;
+	}
+
 	pass_LightRay =  normalize(lightPosition - planetPosition.xyz);
 	pass_ViewRay  =  normalize(- planetPosition.xyz); //normalize(pass_LightRay-planetPosition.xyz);
 
