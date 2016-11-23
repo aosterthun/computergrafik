@@ -22,7 +22,7 @@ texture_object create_texture_object(pixel_data const& tex) {
   glTexParameteri(t_obj.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(t_obj.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glTexImage2D(t_obj.target, 0, GLint(GL_RG8), tex.width, tex.height, 0, tex.channels, tex.channel_type, &tex.pixels[0]);
+  glTexImage2D(t_obj.target, 0, GLint(GL_RGB), tex.width, tex.height, 0, tex.channels, tex.channel_type, &tex.pixels[0]);
 
   //throw std::logic_error("Texture Object creation not implemented yet");
 

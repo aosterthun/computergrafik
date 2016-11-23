@@ -18,14 +18,14 @@ void main() {
 	vec3 ka = vec3(texture.x,texture.y,texture.z);
 	vec3 kd = vec3(texture.x,texture.y,texture.z);
 	vec3 ks = vec3(1.0f,1.0f,1.0f); //white
-	
+
 	//Ambient + Diffuse + Specular
 	vec3 light_a = vec3(0.2, 0.2, 0.2);
 	vec3 light_d = vec3(0.5, 0.5, 0.5);
 	vec3 light_s = vec3(1.0, 1.0, 1.0);
 
 	if(pass_PlanetType == 1){
-		light_a = vec3(0.8, 0.8, 0.8);
+		light_a = vec3(0.0, 0.0, 0.0);
 	}
 	
 	vec3 ambient = ka * light_a;
