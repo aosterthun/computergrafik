@@ -28,14 +28,18 @@ class ApplicationSolar : public Application {
 
   // draw all objects
   void render() const;
-  void create_scene();
+
 
   void upload_planet_transforms(std::shared_ptr<Planet> const& planet) const;
     
  protected:
+  void create_scene();
+  void create_sq();
+
   void initializeShaderPrograms();
   void initializeGeometry();
   void initializeTextures();
+  void initializeFrameBuffer(unsigned const& width, unsigned const& height);
   void updateView();
 
   //planets
@@ -44,9 +48,17 @@ class ApplicationSolar : public Application {
   std::map<std::string, texture_object> texture_map;
 
   //stars
-  model_object stars_object; // cpu representation of model
+  model_object          stars_object; // cpu representation of model
   std::vector<unsigned> stars_indices;
-  std::vector<GLfloat> stars_f;
+  std::vector<GLfloat>  stars_f;
+
+  //screen quad
+  model_object    screen_quad;
+  texture_object  sq_texture;
+  GLuint          sq_handle;
+
+  //effect mapping
+  std::map<std::string, int> effect_map;
 };
 
 #endif
